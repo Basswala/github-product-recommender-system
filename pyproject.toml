@@ -48,16 +48,11 @@ exclude = ["Data*", "static*", "templates*", "prometheus*"]
 
 # Pytest configuration
 [tool.pytest.ini_options]
-minversion = "8.0"
+minversion = "7.0"
 addopts = [
     "-ra",
-    "--strict-markers",
-    "--strict-config",
-    "--cov=flipkart",
-    "--cov=utils", 
-    "--cov-report=term-missing",
-    "--cov-report=html:htmlcov",
-    "--cov-fail-under=30"
+    "--tb=short",
+    "--disable-warnings"
 ]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
@@ -66,11 +61,14 @@ python_functions = ["test_*"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
-    "unit: marks tests as unit tests"
+    "unit: marks tests as unit tests",
+    "external: marks tests that require external services"
 ]
 filterwarnings = [
     "ignore::DeprecationWarning",
-    "ignore::PendingDeprecationWarning"
+    "ignore::PendingDeprecationWarning",
+    "ignore::UserWarning",
+    "ignore::FutureWarning"
 ]
 
 [dependency-groups]

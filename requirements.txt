@@ -1,16 +1,18 @@
-langchain
-langchain-astradb
-langchain-huggingface
-langchain-groq
-langchain-community
-datasets
-pypdf
-python_dotenv
-pandas
-flask
-prometheus_client
+# Core application dependencies
+langchain>=0.1.0
+langchain-astradb>=0.1.0
+langchain-huggingface>=0.0.1
+langchain-groq>=0.0.1
+langchain-community>=0.0.1
+datasets>=2.0.0
+pypdf>=3.0.0
+python-dotenv>=1.0.0
+pandas>=1.5.0
+flask>=2.0.0
+prometheus-client>=0.15.0
 
 # Testing dependencies
-pytest
-pytest-cov
-pytest-mock
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-mock>=3.0.0
+pytest-flask>=1.0.0
