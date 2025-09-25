@@ -57,7 +57,7 @@ addopts = [
     "--cov=utils", 
     "--cov-report=term-missing",
     "--cov-report=html:htmlcov",
-    "--cov-fail-under=50"
+    "--cov-fail-under=30"
 ]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]

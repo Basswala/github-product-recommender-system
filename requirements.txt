@@ -3,9 +3,14 @@ langchain-astradb
 langchain-huggingface
 langchain-groq
 langchain-community
-datasets 
-pypdf 
+datasets
+pypdf
 python_dotenv
-pandas 
-flask 
+pandas
+flask
 prometheus_client
+
+# Testing dependencies
+pytest
+pytest-cov
+pytest-mock
