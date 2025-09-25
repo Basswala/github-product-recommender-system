@@ -59,15 +59,23 @@ class DataConverter:
         # Read CSV and select only the columns we need for the recommender system
         df = pd.read_csv(self.file_path)[["product_title", "review"]]
 
+        # Filter out empty or null reviews for better quality
+        df = df.dropna(subset=['review', 'product_title'])
+        df = df[df['review'].str.strip() != '']
+
         # Convert each row to a LangChain Document
         # The review text becomes the searchable content
         # The product title is stored as metadata for context
         docs = [
             Document(
-                page_content=row['review'],
-                metadata={"product_name": row["product_title"]}
+                page_content=str(row['review']).strip(),
+                metadata={
+                    "product_name": str(row["product_title"]).strip(),
+                    "source": "flipkart_reviews"
+                }
             )
             for _, row in df.iterrows()
+            if len(str(row['review']).strip()) > 10  # Filter very short reviews
         ]
 
         return docs

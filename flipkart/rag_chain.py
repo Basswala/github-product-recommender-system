@@ -87,8 +87,12 @@ class RAGChainBuilder:
         Returns:
             RunnableWithMessageHistory: Complete RAG chain ready for user interactions
         """
-        # Create retriever from vector store - will return top 3 most similar reviews
-        retriever = self.vector_store.as_retriever(search_kwargs={"k": 3})
+        # Create retriever from vector store - will return top 5 most similar reviews
+        # Using more results for better context while maintaining performance
+        retriever = self.vector_store.as_retriever(
+            search_type="similarity",
+            search_kwargs={"k": 5}
+        )
 
         # Prompt template for creating context-aware queries
         # This helps reformulate user questions based on previous conversation
@@ -100,8 +104,18 @@ class RAGChainBuilder:
 
         # Main prompt template for generating responses based on retrieved reviews
         qa_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You're an e-commerce bot answering product-related queries using reviews and titles.
-                          Stick to context. Be concise and helpful.\n\nCONTEXT:\n{context}\n\nQUESTION: {input}"""),
+            ("system", """You're a helpful e-commerce assistant specializing in product recommendations.
+
+                          Use the provided product reviews and context to answer user questions accurately.
+
+                          Guidelines:
+                          - Base your response on the retrieved reviews and product information
+                          - Be concise but informative
+                          - If asked about products not in the context, mention that you specialize in products from the reviews
+                          - Highlight key features, pros, and cons mentioned in reviews
+                          - Suggest alternatives when appropriate
+
+                          CONTEXT:\n{context}\n\nQUESTION: {input}"""),
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}")
         ])

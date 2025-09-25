@@ -53,17 +53,26 @@ def create_app():
         Returns:
             str: AI-generated response based on product review context
         """
-        # Extract user message from form data
-        user_input = request.form["msg"]
+        try:
+            # Extract user message from form data
+            user_input = request.form.get("msg", "").strip()
 
-        # Invoke RAG chain to generate response
-        # Uses session-based chat history for context-aware conversations
-        response = rag_chain.invoke(
-            {"input": user_input},
-            config={"configurable": {"session_id": "user-session"}}
-        )["answer"]
+            if not user_input:
+                return "Please enter a message.", 400
 
-        return response
+            # Invoke RAG chain to generate response
+            # Uses session-based chat history for context-aware conversations
+            response = rag_chain.invoke(
+                {"input": user_input},
+                config={"configurable": {"session_id": "user-session"}}
+            )["answer"]
+
+            return response
+
+        except Exception as e:
+            # Log error and return user-friendly message
+            print(f"Error processing request: {str(e)}")
+            return "Sorry, I encountered an error processing your request. Please try again.", 500
 
     @app.route("/metrics")
     def metrics():

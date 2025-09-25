@@ -161,10 +161,20 @@ class DataIngestor:
             logger.info(f"Successfully converted {len(docs)} documents to LangChain format")
             logger.info("Generating embeddings and adding documents to vector store...")
 
-            # Add documents to vector store - this will:
-            # 1. Generate embeddings for each review using HuggingFace model
+            # Add documents to vector store in batches for better performance
+            # This will: 1. Generate embeddings for each review using HuggingFace model
             # 2. Store embeddings in AstraDB for similarity search
-            self.vstore.add_documents(docs)
+            batch_size = 50  # Process in smaller batches to avoid timeouts
+            total_docs = len(docs)
+
+            for i in range(0, total_docs, batch_size):
+                batch = docs[i:i + batch_size]
+                batch_num = (i // batch_size) + 1
+                total_batches = (total_docs + batch_size - 1) // batch_size
+
+                logger.info(f"Processing batch {batch_num}/{total_batches} ({len(batch)} documents)")
+                self.vstore.add_documents(batch)
+
             logger.info("Successfully added all documents to vector store")
 
             return self.vstore
