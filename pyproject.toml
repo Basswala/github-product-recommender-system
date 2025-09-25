@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "product-recommender"
+version = "0.1.0"
+description = "Recommendation system project"
+authors = [
+    { name = "Basswala" }
+]
+readme = "README.md"
+requires-python = ">=3.9"
+
+# Instead of reading from requirements.txt, declare dependencies directly
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "langchain-astradb",
+    "langchain-huggingface",
+    "langchain-core",
+    "python-dotenv",
+    "flask",
+    "prometheus-client",
+    "langchain",
+    "langchain-community",
+    "langchain-groq",
+    "datasets",
+    "pypdf"
+]
+
+[tool.setuptools.packages.find]
+include = ["flipkart*", "utils*"]
+exclude = ["Data*", "static*", "templates*", "prometheus*"]

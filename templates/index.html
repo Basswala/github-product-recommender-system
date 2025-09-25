@@ -1,0 +1,159 @@
+<!--
+==================================================
+Product Recommender Chatbot Interface
+==================================================
+
+This HTML template creates a responsive chat interface for the product
+recommender system. It uses Bootstrap for styling and jQuery for AJAX
+communication with the Flask backend.
+
+Key Features:
+- Real-time messaging with typing indicators
+- Responsive design that works on desktop and mobile
+- Product-themed styling with Flipkart branding
+- AJAX integration for seamless user experience
+
+Technical Stack:
+- Bootstrap 4.1.3 for responsive UI components
+- jQuery 3.3.1 for DOM manipulation and AJAX
+- FontAwesome 5.5.0 for icons
+- Custom CSS for chat-specific styling
+-->
+
+<!-- Bootstrap CSS for responsive design -->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- Bootstrap JavaScript for interactive components -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<!-- jQuery library for DOM manipulation and AJAX -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Flipkart Product Recommender Chatbot</title>
+		<!-- Bootstrap CSS framework for responsive design -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<!-- FontAwesome icons for UI elements -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+		<!-- jQuery library for AJAX and DOM manipulation -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<!-- Custom CSS for chat interface styling -->
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
+	</head>
+	
+	
+	<body>
+		<!-- Main container taking full height of viewport -->
+		<div class="container-fluid h-100">
+			<!-- Center the chat interface horizontally -->
+			<div class="row justify-content-center h-100">		
+					<!-- Chat interface column - responsive width -->
+					<div class="col-md-8 col-xl-6 chat">
+						<!-- Main chat card container -->
+						<div class="card">
+							<!-- Chat header with bot info -->
+							<div class="card-header msg_head">
+								<!-- Header content with bot avatar and info -->
+								<div class="d-flex bd-highlight">
+									<!-- Bot avatar container -->
+									<div class="img_cont">
+										<!-- E-commerce themed bot avatar -->
+										<img src="https://static.vecteezy.com/system/resources/previews/016/017/018/non_2x/ecommerce-icon-free-png.png" class="rounded-circle user_img">
+										<!-- Online status indicator -->
+										<span class="online_icon"></span>
+									</div>
+									<!-- Bot name and status -->
+									<div class="user_info">
+										<span>Flipkart Chatbot</span>
+										<p>Ask me anything about products!</p>
+									</div>
+								</div>
+							</div>
+							<!-- Message display area - where chat messages appear -->
+							<div id="messageFormeight" class="card-body msg_card_body">
+								<!-- Chat messages will be dynamically added here via JavaScript -->
+							</div>
+							<!-- Message input area at bottom of chat -->
+							<div class="card-footer">
+								<!-- Message input form -->
+								<form id="messageArea" class="input-group">
+									<!-- Text input field for user messages -->
+									<input type="text" id="text" name="msg" placeholder="Ask about products, features, reviews..." autocomplete="off" class="form-control type_msg" required/>
+									<!-- Send button -->
+									<div class="input-group-append">
+										<button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+									</div>
+								</form>
+							</div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--
+		============================================
+		JavaScript for Chat Functionality
+		============================================
+
+		This script handles:
+		1. Form submission and message sending
+		2. Real-time timestamp generation
+		3. AJAX communication with Flask backend
+		4. Dynamic DOM manipulation for messages
+		5. User experience enhancements
+		-->
+		<script>
+			// Initialize chat functionality when page loads
+			$(document).ready(function() {
+				// Handle form submission for sending messages
+				$("#messageArea").on("submit", function(event) {
+					// Generate timestamp for message
+					const date = new Date();
+					const hour = date.getHours();
+					const minute = date.getMinutes();
+					const str_time = hour + ":" + minute;
+
+					// Get user's message from input field
+					var rawText = $("#text").val();
+
+					// Create HTML for user message bubble (right-aligned)
+					var userHtml = '<div class="d-flex justify-content-end mb-4">' +
+								   '<div class="msg_cotainer_send">' + rawText +
+								   '<span class="msg_time_send">' + str_time + '</span></div>' +
+								   '<div class="img_cont_msg">' +
+								   '<img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg">' +
+								   '</div></div>';
+
+					// Clear input field and display user message
+					$("#text").val("");
+					$("#messageFormeight").append(userHtml);
+
+					// Send message to Flask backend via AJAX
+					$.ajax({
+						data: {
+							msg: rawText  // Send user's message
+						},
+						type: "POST",      // POST request to /get endpoint
+						url: "/get",
+					}).done(function(data) {
+						// Handle successful response from RAG system
+						// Create HTML for bot response bubble (left-aligned)
+						var botHtml = '<div class="d-flex justify-content-start mb-4">' +
+									  '<div class="img_cont_msg">' +
+									  '<img src="https://static.vecteezy.com/system/resources/previews/016/017/018/non_2x/ecommerce-icon-free-png.png" class="rounded-circle user_img_msg">' +
+									  '</div>' +
+									  '<div class="msg_cotainer">' + data +
+									  '<span class="msg_time">' + str_time + '</span></div></div>';
+
+						// Add bot response to chat interface
+						$("#messageFormeight").append($.parseHTML(botHtml));
+					});
+					// Prevent default form submission (page reload)
+					event.preventDefault();
+				});
+			});
+		</script>
+        
+    </body>
+</html>
